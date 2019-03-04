@@ -10,7 +10,7 @@ public class App
     {
         System.out.println( "Connecting to Redis!" );
         try {
-            Jedis jedis = new Jedis("localhost"); 
+            Jedis jedis = new Jedis("localhost", 6379); 
 	    jedis.auth("password");
             Map<String, String> dataMap = jedis.hgetAll("56714964282381505346596299146714128775465616245895347306009810006048170613624066755"); 
             System.out.println(dataMap);
