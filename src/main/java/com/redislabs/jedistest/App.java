@@ -16,7 +16,7 @@ public class App
 	JedisPoolConfig poolConf = new JedisPoolConfig();
 
         poolConf.setMaxTotal(8);         // maximum active connections
-        poolConf.setMaxIdle(8);          // maximum idle connections
+        poolConf.setMaxIdle(8);          // The maximum number of connections that should be kept in the idle pool if isPoolSweeperEnabled() returns false.
         poolConf.setMinIdle(2);          // The minimum number of established connections that should be kept in the pool at all times.
         poolConf.setTestOnBorrow(true);  // send a ping before when we attempt to grab a connection from the pool
         poolConf.setTestOnReturn(false); // don't send a ping when we close the pool resource - no idea why you would
