@@ -1,6 +1,10 @@
 package com.redislabs.jedistest;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import org.apache.commons.pool2.PooledObject;
+
 import java.util.Map;
 
 
@@ -9,13 +13,25 @@ public class App
     public static void main( String[] args )
     {
         System.out.println( "Connecting to Redis!" );
+	JedisPoolConfig poolConf = new JedisPoolConfig();
+
+        poolConf.setMaxTotal(8);         // maximum active connections
+        poolConf.setMaxIdle(8);          // maximum idle connections
+        poolConf.setMinIdle(2);          // minimum number of idle connections
+        poolConf.setTestOnBorrow(true);  // send a ping before when we attempt to grab a connection from the pool
+        poolConf.setTestOnReturn(false); // don't send a ping when we close the pool resource - no idea why you would
+        poolConf.setTestWhileIdle(true); // send ping from idle resources in the pool
+
+	JedisPool pool = new JedisPool(poolConf, "localhost", 6379);
+
         try {
-            Jedis jedis = new Jedis("localhost", 6379); 
-	    jedis.auth("password");
-            Map<String, String> dataMap = jedis.hgetAll("56714964282381505346596299146714128775465616245895347306009810006048170613624066755"); 
+            Jedis jedis = pool.getResource();
+	    //jedis.auth("password");
+            Map<String, String> dataMap = jedis.hgetAll("test123"); 
             System.out.println(dataMap);
+	    jedis.close();
         } catch (Exception e) {
-            System.out.println("Unable to connect to Redis Server");
+            System.out.println("Error:" + e);
         }
 
     }
