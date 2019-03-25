@@ -21,6 +21,7 @@ public class App
         poolConf.setTestOnBorrow(true);  // send a ping before when we attempt to grab a connection from the pool
         poolConf.setTestOnReturn(false); // don't send a ping when we close the pool resource - no idea why you would
         poolConf.setTestWhileIdle(true); // send ping from idle resources in the pool
+        poolConf.setMaxWaitMillis(5000); // set max timeout for write operations
 
 	JedisPool pool = new JedisPool(poolConf, "localhost", 6379);
 
