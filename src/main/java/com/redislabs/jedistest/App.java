@@ -1,7 +1,10 @@
 package com.redislabs.jedistest;
 
 import redis.clients.jedis.Jedis;
-import java.util.Map;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.commands.ProtocolCommand;
+import redis.clients.jedis.util.SafeEncoder;
+
 
 
 public class App 
@@ -11,9 +14,11 @@ public class App
         System.out.println( "Connecting to Redis!" );
         try {
             Jedis jedis = new Jedis("localhost", 6379); 
-	    jedis.auth("password");
-            Map<String, String> dataMap = jedis.hgetAll("56714964282381505346596299146714128775465616245895347306009810006048170613624066755"); 
-            System.out.println(dataMap);
+	    //jedis.auth("password"); // if you need a password
+	    Pipeline pipe = jedis.pipelined();
+	    pipe.sendCommand(Command.ADD,  SafeEncoder.encode("People"), SafeEncoder.encode("chris"));
+	    pipe.expire("People", 200);
+	    pipe.sync();
         } catch (Exception e) {
             System.out.println("Unable to connect to Redis Server");
         }
