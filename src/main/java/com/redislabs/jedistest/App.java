@@ -38,11 +38,6 @@ public class App
     	    pipe.expire("People", 200);
             pipe.sync();
 
-	//System.out.println("Type");
-	//System.out.println(bf.get().getClass().getSimpleName());
-	//System.out.println(bf.get().getClass());
-	//System.out.println((int) (long) bf.get());
-	//
 	Long result = (Long) bf.get();
 
 	    if ( result > 0) {
