@@ -67,19 +67,18 @@ public class App
     	    pipe.expire("People", 200);
             pipe.sync();
 
-	Long result = (Long) bf.get();
+	        Long result = (Long) bf.get();
 
-	    if ( result > 0) {
-            	System.out.println("Newly added");
-	    } else {
-            	System.out.println("Already present");
-	    }
-
+	        if ( result > 0) {
+               	System.out.println("Newly added");
+	        } else {
+               	System.out.println("Already present");
+	        }
 
             jedis.close();
 
         } catch (Exception e) {
-            System.out.println("Unable to connect to Redis Server");
+            System.out.println("Redis Error: " + e);
         }
 
         pool.close();
