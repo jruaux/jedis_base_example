@@ -16,13 +16,42 @@ public class App
 
         JedisPoolConfig poolConf = new JedisPoolConfig();
 
-        poolConf.setMaxTotal(8);         // maximum active connections
-        poolConf.setMaxIdle(8);          // The maximum number of connections that should be kept in the idle pool if isPoolSweeperEnabled() returns false.
-        poolConf.setMinIdle(2);          // The minimum number of established connections that should be kept in the pool at all times.
-        poolConf.setTestOnBorrow(false); // send a ping before when we attempt to grab a connection from the pool
-        poolConf.setTestOnReturn(false); // don't send a ping when we close the pool resource - no idea why you would
-        poolConf.setTestWhileIdle(true); // send ping from idle resources in the pool
-        poolConf.setMaxWaitMillis(5000); // set max timeout for write operations
+        poolConf.setMaxTotal(8);
+        /* maximum active connections
+            Redis Enterprise can handle signfigantly more connections so make this number high
+            If using threads 2-3x the thread count is probably a safe rule of thumb
+            be sure to return connections to the pool
+        */
+        poolConf.setMaxIdle(8);
+        /* The maximum number of connections that should be kept in the idle pool if isPoolSweeperEnabled() returns false.
+           Connections start getting closed here if idle if you have long running idle connections consider matching setMaxTotal
+        */
+        poolConf.setMinIdle(2);
+        /* The minimum number of established connections that should be kept in the pool at all times.
+           If using threads 1.25-1.5x the number of threads is safe
+           This will ensure that connections are kept to the back end so they will recycle quickly
+        */
+        poolConf.setTestOnBorrow(false); 
+        /* when true - send a ping before when we attempt to grab a connection from the pool
+           Generally not recommended as while the PING command (https://redis.io/commands/PING) is realtively lightweight
+           if there is much borrowing happening this can increase traffic if the number of operations per connection is low
+        */
+        poolConf.setTestOnReturn(false);
+        /* when true - send a ping upon returning a pool connection
+           I cannot imagine a scenario where this would be useful
+        */
+        poolConf.setTestWhileIdle(true);
+        /* when true - send ping from idle resources in the pool
+           Again the ping is not expensive
+           Reccommend setting this to true if you have a firewall between client and server that disconnects idle TCP connections
+           Aso common issue on the cloud with load balancers (https://aws.amazon.com/blogs/aws/elb-idle-timeout-control/)
+        */
+        poolConf.setMaxWaitMillis(5000);
+        /* set max timeout in milliseconds for write operations
+           default is -1 which means wait forever
+           Tune this carefully - often a good idea to slightly exceed your redis SLOWLOG settings,
+           so you can view what is taking so long (https://redis.io/commands/slowlog)
+        */
 
         JedisPool pool = new JedisPool(poolConf, "localhost", 6379);
 
