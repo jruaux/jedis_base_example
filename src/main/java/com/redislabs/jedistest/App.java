@@ -18,6 +18,7 @@ public class App
 
         poolConf.setMaxTotal(8);
         /* maximum active connections
+	    Max number of connections in the pool should be sized with traffic expectations (high watermark of # concurrent users)
             Redis Enterprise can handle signfigantly more connections so make this number high
             If using threads 2-3x the thread count is probably a safe rule of thumb
             be sure to return connections to the pool
